@@ -1,0 +1,28 @@
+import {v2 as cloudinary} from "cloudinary";
+import dotenv from "dotenv";
+dotenv.config();
+import fs from "fs";
+
+cloudinary.config(
+    {
+        cloud_name : process.env.CLOUDINARY_CLOUD_NAME,
+        api_key : process.env.CLOUDINARY_API_KEY,
+        api_secret : process.env.CLOUDINARY_API_SECRET
+    }
+);
+
+export const uploadOnCloudinary = async (filePath) => {
+    try {
+        if(!filePath)return null;
+        // Upload file on cloudinary
+        const response = await cloudinary.uploader.upload(filePath, {
+            resource_type: "auto"
+        })
+        console.log("File has been uploaded on cloudinary ", response);
+        fs.unlinkSync(filePath)
+        return response;
+    }catch{
+        fs.unlink(filePath);
+        return null;
+    }
+}
